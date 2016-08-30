@@ -15,6 +15,13 @@ def main():
         menuInput = mainMenu()
         if menuInput == "R":
             print("Required items:")
+            itemList.seek(0)
+            i = 0
+            for row in itemList:
+                item = row.split(",")
+                if item[3] == "r\n":
+                    print("{}. {:18}  $ {:.2f} ({})".format(i, item[0], float(item[1]), item[2]))
+                    i += 1
         elif menuInput == "C":
             print("C")
         elif menuInput == "A":
