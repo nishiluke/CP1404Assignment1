@@ -1,12 +1,13 @@
 MENU_TEXT = ["R", "List required items", "C", "List completed items", "A", "Add new item",
              "M", "Mark an item as completed", "Q", "Quit"]
 
+itemFile = open("items.csv", "r+")
+
 
 def main():
-    itemList = open("items.csv", "r+")
     print("Shopping List 1.0 - by Luke West")
     rowCount = 0
-    for row in itemList:
+    for row in itemFile:
         rowCount += 1
     print("{} items loaded from items.csv".format(rowCount))
 
@@ -15,21 +16,18 @@ def main():
         menuInput = mainMenu()
         if menuInput == "R":
             print("Required items:")
-            itemList.seek(0)
-            i = 0
-            for row in itemList:
-                item = row.split(",")
-                if item[3] == "r\n":
-                    print("{}. {:18}  $ {:.2f} ({})".format(i, item[0], float(item[1]), item[2]))
-                    i += 1
+            itemMenu("r")
         elif menuInput == "C":
-            print("C")
+            print("Completed items:")
+            itemMenu("c")
         elif menuInput == "A":
             print("A")
         elif menuInput == "M":
-            print("M")
+            itemMenu("r")
         elif menuInput == "Q":
             print("Thanks for using the shopping list")
+            itemFile.close()
+
 
 def mainMenu():
     userInput = ""
@@ -42,6 +40,30 @@ def mainMenu():
         if userInput not in MENU_TEXT[::2]:
             print("Invalid menu choice")
     return userInput
+
+
+def itemMenu(itemState):
+    itemFile.seek(0)
+    rowCount = 0
+    for row in itemFile:
+        rowCount += 1
+    itemFile.seek(0)
+    i = 0
+    itemList = []
+    itemOrder = [0]
+    itemOrder += [0] * rowCount
+    itemTotal = 0.0
+    for row in itemFile:
+        item = row.split(",")
+        if item[3] == "{}\n".format(itemState):
+            itemList.append(item)
+            itemOrder[int(itemList[i][2]) - 1] = i
+            itemTotal += float(itemList[i][1])
+            i += 1
+    for x in range(i):
+        print("{}. {:18}  $ {:.2f} ({})".format(x, itemList[itemOrder[x]][0], float(itemList[itemOrder[x]][1]),
+                                                itemList[itemOrder[x]][2]))
+    print("Total expected price for {} items: ${:.2f}".format(i, itemTotal))
 
 
 main()
