@@ -23,7 +23,23 @@ def main():
         elif menuInput == "A":
             print("A")
         elif menuInput == "M":
-            itemMenu("r")
+            fileLineList = itemMenu("r")
+            print(fileLineList)
+            print("Enter the number of an item to mark as completed")
+            while True:
+                try:
+                    itemCompleteInput = int(input(">>>"))
+                    while itemCompleteInput not in range(len(fileLineList[::2])):
+                        print("Invalid item number")
+                        itemCompleteInput = int(input(">>>"))
+                    break
+                except ValueError:
+                    print("Invalid input; enter a number")
+            itemFile.seek(fileLineList[itemCompleteInput * 2 + 1])
+            itemComplete = itemFile.readline()
+            print(itemComplete)
+
+
         elif menuInput == "Q":
             print("Thanks for using the shopping list")
             itemFile.close()
@@ -45,25 +61,33 @@ def mainMenu():
 def itemMenu(itemState):
     itemFile.seek(0)
     rowCount = 0
+    itemCount = 0
     for row in itemFile:
         rowCount += 1
+        item = row.split(",")
+        if item[3] == "{}\n".format(itemState):
+            itemCount += 1
     itemFile.seek(0)
     i = 0
     itemList = []
-    itemOrder = [0]
-    itemOrder += [0] * rowCount
+    itemOrder = [0] * rowCount
     itemTotal = 0.0
+    fileLine = 0
+    fileLineList = [0] * itemCount * 2
     for row in itemFile:
         item = row.split(",")
         if item[3] == "{}\n".format(itemState):
             itemList.append(item)
             itemOrder[int(itemList[i][2]) - 1] = i
             itemTotal += float(itemList[i][1])
+            fileLineList[i * 2] = int(itemList[i][2])
+            fileLineList[i * 2 + 1] = fileLine
             i += 1
+        fileLine += len(row)
     for x in range(i):
         print("{}. {:18}  $ {:.2f} ({})".format(x, itemList[itemOrder[x]][0], float(itemList[itemOrder[x]][1]),
                                                 itemList[itemOrder[x]][2]))
     print("Total expected price for {} items: ${:.2f}".format(i, itemTotal))
-
+    return fileLineList
 
 main()
