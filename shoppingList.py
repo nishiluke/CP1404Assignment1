@@ -1,6 +1,5 @@
 MENU_TEXT = ["R", "List required items", "C", "List completed items", "A", "Add new item",
              "M", "Mark an item as completed", "Q", "Quit"]
-
 itemFile = open("items.csv", "r+")
 
 
@@ -17,32 +16,37 @@ def main():
         if menuInput == "R":
             print("Required items:")
             itemMenu("r")
+
         elif menuInput == "C":
             print("Completed items:")
             itemMenu("c")
+
         elif menuInput == "A":
             print("A")
+
         elif menuInput == "M":
-            fileLineList = itemMenu("r")
-            print(fileLineList)
+            itemOrder = itemMenu("r")
             print("Enter the number of an item to mark as completed")
             while True:
                 try:
-                    itemCompleteInput = int(input(">>>"))
-                    while itemCompleteInput not in range(len(fileLineList[::2])):
+                    itemMarkInput = int(input(">>>"))
+                    while itemMarkInput not in range(len(itemOrder)):
                         print("Invalid item number")
-                        itemCompleteInput = int(input(">>>"))
+                        itemMarkInput = int(input(">>>"))
                     break
                 except ValueError:
                     print("Invalid input; enter a number")
-            itemFile.seek(fileLineList[itemCompleteInput * 2 + 1])
-            itemComplete = itemFile.readline()
-            print(itemComplete)
-
-
+            itemSelected = itemOrder[itemMarkInput]
+            itemFile.seek(0)
+            for row in itemFile:
+                if row == itemSelected:
+                    row.replace(",r", ",c")
+                    print(row)
+                    print(row.replace("r\n", "c\n"))
+            print("{} marked as completed".format(itemSelected.split(",")[0]))
+            itemFile.close()
         elif menuInput == "Q":
             print("Thanks for using the shopping list")
-            itemFile.close()
 
 
 def mainMenu():
@@ -60,34 +64,24 @@ def mainMenu():
 
 def itemMenu(itemState):
     itemFile.seek(0)
-    rowCount = 0
     itemCount = 0
     for row in itemFile:
-        rowCount += 1
         item = row.split(",")
         if item[3] == "{}\n".format(itemState):
             itemCount += 1
-    itemFile.seek(0)
     i = 0
-    itemList = []
-    itemOrder = [0] * rowCount
     itemTotal = 0.0
-    fileLine = 0
-    fileLineList = [0] * itemCount * 2
-    for row in itemFile:
-        item = row.split(",")
-        if item[3] == "{}\n".format(itemState):
-            itemList.append(item)
-            itemOrder[int(itemList[i][2]) - 1] = i
-            itemTotal += float(itemList[i][1])
-            fileLineList[i * 2] = int(itemList[i][2])
-            fileLineList[i * 2 + 1] = fileLine
-            i += 1
-        fileLine += len(row)
-    for x in range(i):
-        print("{}. {:18}  $ {:.2f} ({})".format(x, itemList[itemOrder[x]][0], float(itemList[itemOrder[x]][1]),
-                                                itemList[itemOrder[x]][2]))
+    itemOrder = [0] * itemCount
+    for priority in range(3):
+        itemFile.seek(0)
+        for row in itemFile:
+            item = row.split(",")
+            if item[3] == "{}\n".format(itemState) and item[2] == str(priority + 1):
+                print("{}. {:18}  $ {:.2f} ({})".format(i, item[0], float(item[1]),item[2]))
+                itemTotal += float(item[1])
+                itemOrder[i] = row
+                i += 1
     print("Total expected price for {} items: ${:.2f}".format(i, itemTotal))
-    return fileLineList
+    return itemOrder
 
 main()
