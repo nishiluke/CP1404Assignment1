@@ -1,13 +1,16 @@
 MENU_TEXT = ["R", "List required items", "C", "List completed items", "A", "Add new item",
              "M", "Mark an item as completed", "Q", "Quit"]
+
 itemFile = open("items.csv", "r+")
+rowCount = 0
+itemList = []
+for row in itemFile:
+    itemList.append(row)
+    rowCount += 1
 
 
 def main():
     print("Shopping List 1.0 - by Luke West")
-    rowCount = 0
-    for row in itemFile:
-        rowCount += 1
     print("{} items loaded from items.csv".format(rowCount))
 
     menuInput = ""
@@ -37,14 +40,11 @@ def main():
                 except ValueError:
                     print("Invalid input; enter a number")
             itemSelected = itemOrder[itemMarkInput]
-            itemFile.seek(0)
-            for row in itemFile:
+            for row in itemList:
                 if row == itemSelected:
-                    row.replace(",r", ",c")
-                    print(row)
-                    print(row.replace("r\n", "c\n"))
+                    row.replace("r\n", "c\n")
             print("{} marked as completed".format(itemSelected.split(",")[0]))
-            itemFile.close()
+            print(itemList)
         elif menuInput == "Q":
             print("Thanks for using the shopping list")
 
@@ -63,9 +63,8 @@ def mainMenu():
 
 
 def itemMenu(itemState):
-    itemFile.seek(0)
     itemCount = 0
-    for row in itemFile:
+    for row in itemList:
         item = row.split(",")
         if item[3] == "{}\n".format(itemState):
             itemCount += 1
@@ -73,8 +72,7 @@ def itemMenu(itemState):
     itemTotal = 0.0
     itemOrder = [0] * itemCount
     for priority in range(3):
-        itemFile.seek(0)
-        for row in itemFile:
+        for row in itemList:
             item = row.split(",")
             if item[3] == "{}\n".format(itemState) and item[2] == str(priority + 1):
                 print("{}. {:18}  $ {:.2f} ({})".format(i, item[0], float(item[1]),item[2]))
