@@ -26,7 +26,33 @@ def main():
             itemMenu("c")
 
         elif menuInput == "A":
-            print("A")
+            newItemInfo = ["",0.0,0,""]
+            newItemInfo[0] = str(input("Item name: "))
+            while newItemInfo[0] == "":
+                print("Input can not be blank")
+                newItemInfo[0] = str(input("Item name: "))
+            while True:
+                try:
+                    newItemInfo[1] = float(input("Price: $"))
+                    while newItemInfo[1] < 0:
+                        print("Price must be >= $0")
+                        newItemInfo[1] = float(input("Price: $"))
+                    break
+                except ValueError:
+                    print("Invalid input; enter a valid number")
+            while True:
+                try:
+                    newItemInfo[2] = int(input("Priority: "))
+                    while newItemInfo[2] < 0 or newItemInfo[2] > 3:
+                        print("Priority must be 1, 2 or 3")
+                        newItemInfo[2] = int(input("Priority: "))
+                    break
+                except ValueError:
+                    print("Invalid input; enter a valid number")
+            newItemInfo[3] = "r\n"
+            newItem = str(newItemInfo[0]) + "," + str(newItemInfo[1]) + "," + str(newItemInfo[2]) + "," + str(newItemInfo[3])
+            itemList.append(newItem)
+            print("{}, ${:.2f} (priority {}) added to the shopping list".format(newItemInfo[0], newItemInfo[1], newItemInfo[2]))
 
         elif menuInput == "M":
             itemOrder = itemMenu("r")
@@ -50,9 +76,16 @@ def main():
                 i += 1
             print("{} marked as completed".format(itemSelected.split(",")[0]))
             print(itemList)
-        elif menuInput == "Q":
-            print("Thanks for using the shopping list")
 
+        elif menuInput == "Q":
+            itemFile = open("items.csv", "w")
+            for item in itemList:
+                itemFile.write(item)
+            print("{} items saved to items.csv".format(len(itemList)))
+            print("Have a nice day :)")
+            itemFile.close()
+        else:
+            print("Invalid menu choice")
 
 def mainMenu():
     userInput = ""
