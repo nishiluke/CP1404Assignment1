@@ -7,6 +7,7 @@ itemList = []
 for row in itemFile:
     itemList.append(row)
     rowCount += 1
+itemFile.close()
 
 
 def main():
@@ -40,9 +41,13 @@ def main():
                 except ValueError:
                     print("Invalid input; enter a number")
             itemSelected = itemOrder[itemMarkInput]
+            i = 0
             for row in itemList:
                 if row == itemSelected:
-                    row.replace("r\n", "c\n")
+                    itemInfo = row.split(",")
+                    itemInfo[3] = "c\n"
+                    itemList[i] = itemInfo[0] + "," + itemInfo[1] + "," + itemInfo[2] + "," + itemInfo[3]
+                i += 1
             print("{} marked as completed".format(itemSelected.split(",")[0]))
             print(itemList)
         elif menuInput == "Q":
