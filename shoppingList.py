@@ -1,3 +1,105 @@
+'''
+
+Function main
+
+open items.csv as itemFile
+turn itemFile into a list named itemList
+close itemFile
+
+display "Shopping List 1.0 - by Luke West"
+display number of lines in itemList + "items loaded from items.csv"
+
+while menuInput not equal to "Q"
+    display menu
+    get menuInput from user
+    while menuInput does not equal menu options
+        display "Invalid menu choice"
+        get menuInput from user
+    if menuInput equals "R"
+        display "Required items:"
+        run function itemMenu("r")
+
+    else if menuInput equals "C":
+        display "Completed items:"
+        run function itemMenu("c")
+
+    else if menuInput equals "A":
+    Display “Item name: “
+        get newItemName
+        while newItemName is blank
+            display "Input can not be blank"
+        Display “Item name: “
+            get newItemName
+
+    display "Price: $"
+    get newItemPrice
+        while newItemPrice < 0
+            display "Price must be >= $0"
+            display "Price: $"
+            get newItemPrice
+
+    display “Priority: "
+    get newItemPriority
+    while newItemPriority < 0 or > 3
+        display "Priority must be 1, 2 or 3"
+        display “Priority: "
+        get newItemPriority
+
+    newItemInfo = "r "
+    newItem = newItemName + newItemPrice + newItemPriority + newItemInfo
+    add newItem to itemList
+    display newItem + “ added to the shopping list
+
+    else if menuInput equals "M":
+        get itemOrder from function itemMenu("r")
+        display "Enter the number of an item to mark as completed"
+        display ">>>"
+        get itemMarkInput
+            while itemMarkInput not in itemOrder
+                display"Invalid item number")
+                display ">>>"
+                get itemMarkInput
+        itemSelected = itemOrder[itemMarkInput]
+        i = 0
+        for row in itemList:
+            if row equals itemSelected:
+                itemInfo = row.split(",")
+                itemInfo[3] = "c"
+                itemList[i] = itemInfo[0] + "," + itemInfo[1] + "," + itemInfo[2] + "," + itemInfo[3]
+            i += 1
+        display itemSelected[name] + “ marked as completed
+
+    else if menuInput equals "Q":
+        open items.csv as itemFile
+        for item in itemList:
+            print item itemFile
+        display number of lines in itemList + " items saved to items.csv"
+        display "Have a nice day :)"
+        close itemFile
+
+
+Function itemMenu
+
+itemCount = 0
+    for row in itemList
+        item = row.split()
+        if item[3] equals "r" or "c"
+            itemCount += 1
+    i = 0
+    itemTotal = 0.0
+    for priority in range(3)
+        for row in itemList
+            item = row.split()
+            if item[3] equals "r" or "c" and item[2] equals priority
+                display i + item[0] + item[1] + item[2]
+                itemTotal += item[1]
+                itemOrder[i] = row
+                i += 1
+    display itemTotal
+    return itemOrder
+
+'''
+
 MENU_TEXT = ["R", "List required items", "C", "List completed items", "A", "Add new item",
              "M", "Mark an item as completed", "Q", "Quit"]
 
@@ -89,8 +191,6 @@ def main():
             print("{} items saved to items.csv".format(len(itemList)))
             print("Have a nice day :)")
             itemFile.close()
-        else:
-            print("Invalid menu choice")
 
 
 def itemMenu(itemState):
