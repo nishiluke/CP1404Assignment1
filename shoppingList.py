@@ -2,21 +2,27 @@ MENU_TEXT = ["R", "List required items", "C", "List completed items", "A", "Add 
              "M", "Mark an item as completed", "Q", "Quit"]
 
 itemFile = open("items.csv", "r+")
-rowCount = 0
 itemList = []
 for row in itemFile:
     itemList.append(row)
-    rowCount += 1
 itemFile.close()
 
 
 def main():
     print("Shopping List 1.0 - by Luke West")
-    print("{} items loaded from items.csv".format(rowCount))
+    print("{} items loaded from items.csv".format(len(itemList)))
 
     menuInput = ""
     while menuInput != "Q":
-        menuInput = mainMenu()
+        menuInput = ""
+        while menuInput not in MENU_TEXT[::2]:
+            print("Menu:")
+            for item in range(5):
+                item *= 2
+                print("{} - {}".format(MENU_TEXT[item], MENU_TEXT[item+1]))
+            menuInput = str(input(">>>")).upper()
+            if menuInput not in MENU_TEXT[::2]:
+                print("Invalid menu choice")
         if menuInput == "R":
             print("Required items:")
             itemMenu("r")
@@ -75,7 +81,6 @@ def main():
                     itemList[i] = itemInfo[0] + "," + itemInfo[1] + "," + itemInfo[2] + "," + itemInfo[3]
                 i += 1
             print("{} marked as completed".format(itemSelected.split(",")[0]))
-            print(itemList)
 
         elif menuInput == "Q":
             itemFile = open("items.csv", "w")
@@ -86,18 +91,6 @@ def main():
             itemFile.close()
         else:
             print("Invalid menu choice")
-
-def mainMenu():
-    userInput = ""
-    while userInput not in MENU_TEXT[::2]:
-        print("Menu:")
-        for item in range(5):
-            item *= 2
-            print("{} - {}".format(MENU_TEXT[item], MENU_TEXT[item+1]))
-        userInput = str(input(">>>")).upper()
-        if userInput not in MENU_TEXT[::2]:
-            print("Invalid menu choice")
-    return userInput
 
 
 def itemMenu(itemState):
