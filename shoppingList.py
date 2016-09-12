@@ -1,5 +1,10 @@
 '''
 
+WestLukeAssignment1.py
+name: Luke West
+github repository: https://github.com/nishiluke/CP1404Assignment1
+
+
 Function main
 
 open items.csv as itemFile
